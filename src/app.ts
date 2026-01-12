@@ -1,9 +1,10 @@
 import express from 'express';
 import { requestLogger } from './middleware/requestLogger';
+import { config } from './config/env';
 import logger from './utils/logger';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = config.PORT;
 
 // Middleware
 app.use(express.json());
