@@ -2,6 +2,8 @@ import express from 'express';
 import { requestLogger } from './middleware/requestLogger';
 import { config } from './config/env';
 import logger from './utils/logger';
+import { AppError } from './utils/AppError';
+import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
 const PORT = config.PORT;
@@ -16,10 +18,15 @@ app.get('/', (req, res) => {
     res.json({ message: 'Hello World' });
 });
 
-app.get('/error', (req, res) => {
-    logger.error('Something went wrong', { error: 'Simulation' });
-    res.status(500).json({ error: 'Internal Server Error' });
+
+
+// 404 Handler
+app.use((req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+
+// Global Error Handler
+app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
